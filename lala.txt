@@ -1,0 +1,150 @@
+//@version=5
+indicator('(Daily) EMAs made by _bbalint64_', shorttitle='EMAs by bbalint64', overlay=true)
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+EMAinput1 = input.int(title='EMA 1', defval=200, inline='1')
+EMAinput2 = input.int(title='EMA 2', defval=50, inline='2')
+BALinput1 = input.int(title='mérleg EMA 1', defval=8, inline='3')
+BALinput2 = input.int(title='mérleg EMA 2', defval=13, inline='4')
+BALinput3 = input.int(title='mérleg EMA 3', defval=21, inline='5')
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+cv1 = input.color(title='Napos vonal színe', defval=color.white, inline='1')
+cv2 = input.color(title='Napos vonal színe', defval=color.white, inline='2')
+cv3 = input.color(title='Napos vonal színe', defval=color.white, inline='3')
+cv4 = input.color(title='Napos vonal színe', defval=color.white, inline='4')
+cv5 = input.color(title='Napos vonal színe', defval=color.white, inline='5')
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+ema = input(title='EMA vonalak mérete', defval=13)
+mema = input(title='Mérleg EMA vonalak mérete', defval=8)
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+EMA1 = ta.ema(close, EMAinput1)
+EMA2 = ta.ema(close, EMAinput2)
+BAL1 = ta.ema(close, BALinput1)
+BAL2 = ta.ema(close, BALinput2)
+BAL3 = ta.ema(close, BALinput3)
+
+AEMA1 = ta.ema(close, EMAinput1)
+AEMA2 = ta.ema(close, EMAinput2)
+BEMA1 = ta.ema(close, BALinput1)
+BEMA2 = ta.ema(close, BALinput2)
+BEMA3 = ta.ema(close, BALinput3)
+
+plot(AEMA1, 'Aktív EMA1', linewidth=1, color=color.rgb(73, 95, 185))
+plot(AEMA2, 'Aktív EMA2',linewidth=1, color=color.rgb(24, 208, 229))
+plot(BEMA1, 'Aktív mérleg EMA1', linewidth=1, color=color.yellow)
+plot(BEMA2, 'Aktív mérleg EMA2', linewidth=1, color=color.orange)
+plot(BEMA3, 'Aktív mérleg EMA3', linewidth=1, color=color.red)
+
+plotEMA1 = request.security(syminfo.tickerid, 'D', EMA1)
+plotEMA2 = request.security(syminfo.tickerid, 'D', EMA2)
+plotBAL1 = request.security(syminfo.tickerid, 'D', BAL1)
+plotBAL2 = request.security(syminfo.tickerid, 'D', BAL2)
+plotBAL3 = request.security(syminfo.tickerid, 'D', BAL3)
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+distance = input(3, 'Szöveg távolsága a vonaltól')
+r1_x = time + math.round(ta.change(time) * distance)
+
+ema1label = label.new(x=r1_x, y=plotEMA1, text='D' + str.tostring(EMAinput1), xloc=xloc.bar_time, yloc=yloc.price, style=label.style_none, textcolor=color.white, size=size.small)
+label.delete(ema1label[1])
+
+ema2label = label.new(x=r1_x, y=plotEMA2, text='D' + str.tostring(EMAinput2), xloc=xloc.bar_time, yloc=yloc.price, style=label.style_none, textcolor=color.white, size=size.small)
+label.delete(ema2label[1])
+
+bal1label = label.new(x=r1_x, y=plotBAL1, text='D' + str.tostring(BALinput1), xloc=xloc.bar_time, yloc=yloc.price, style=label.style_none, textcolor=color.white, size=size.small)
+label.delete(bal1label[1])
+
+bal2label = label.new(x=r1_x, y=plotBAL2, text='D' + str.tostring(BALinput2), xloc=xloc.bar_time, yloc=yloc.price, style=label.style_none, textcolor=color.white, size=size.small)
+label.delete(bal2label[1])
+
+bal3label = label.new(x=r1_x, y=plotBAL3, text='D' + str.tostring(BALinput3), xloc=xloc.bar_time, yloc=yloc.price, style=label.style_none, textcolor=color.white, size=size.small)
+label.delete(bal3label[1])
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+var line a = line.new(bar_index[ema], plotEMA1, bar_index, plotEMA1, color=cv1, width=1)
+line.set_x1(a, bar_index[ema])
+line.set_x2(a, bar_index)
+line.set_y1(a, plotEMA1)
+line.set_y2(a, plotEMA1)
+
+var line b = line.new(bar_index[ema], plotEMA2, bar_index, plotEMA2, color=cv2, width=1)
+line.set_x1(b, bar_index[ema])
+line.set_x2(b, bar_index)
+line.set_y1(b, plotEMA2)
+line.set_y2(b, plotEMA2)
+
+var line c = line.new(bar_index[mema], plotBAL1, bar_index, plotBAL1, color=cv3, width=1)
+line.set_x1(c, bar_index[mema])
+line.set_x2(c, bar_index)
+line.set_y1(c, plotBAL1)
+line.set_y2(c, plotBAL1)
+
+var line d = line.new(bar_index[mema], plotBAL2, bar_index, plotBAL2, color=cv4, width=1)
+line.set_x1(d, bar_index[mema])
+line.set_x2(d, bar_index)
+line.set_y1(d, plotBAL2)
+line.set_y2(d, plotBAL2)
+
+var line e = line.new(bar_index[mema], plotBAL3, bar_index, plotBAL3, color=cv5, width=1)
+line.set_x1(e, bar_index[mema])
+line.set_x2(e, bar_index)
+line.set_y1(e, plotBAL3)
+line.set_y2(e, plotBAL3)
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//ignores
+plot(plotEMA1, 'Napos EMA1', linewidth=1, transp=77)
+plot(plotEMA2, 'Napos EMA2', linewidth=1, transp=77)
+plot(plotBAL1, 'Napos mérleg EMA1', linewidth=1, transp=100)
+plot(plotBAL2, 'Napos mérleg EMA2', linewidth=1, transp=100)
+plot(plotBAL3, 'Napos mérleg EMA3', linewidth=1, transp=100)
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+leftLenH = 10
+rightLenH = 10
+
+leftLenL = 10
+rightLenL = 10
+
+////////////////////////////////////////////////////////////////////
+
+zold = input.color(title='Szöveg színe ||| EMA Felett:', defval=color.green, inline='10')
+piros = input.color(title=' EMA Alatt:', defval=color.red, inline='10')
+var table table = table.new(position.top_right, 2, 2)
+
+eema = ta.ema(close, 1)
+Deema = request.security(syminfo.tickerid, 'D', eema)
+ematext50 = "50ema "
+ematext200 = "200ema "
+if Deema > plotEMA1
+    table.cell(table, 0, 0, text=(ematext200 + "felett"), text_color=zold)
+
+if Deema > plotEMA2
+    table.cell(table, 0, 1, text=(ematext50 + "felett"), text_color=zold)
+    
+if Deema < plotEMA1
+    table.cell(table, 0, 0, text=(ematext200 + "alatt"), text_color=piros)
+
+if Deema < plotEMA2
+    table.cell(table, 0, 1, text=(ematext50 + "alatt"), text_color=piros)
+
+
+
+
+
+
+
+
